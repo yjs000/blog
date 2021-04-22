@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>My Blog</title>
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+
+  <header>My blog
+    <ul id="nav">
+      <li><a href="/">일기장</a></li>
+      <li><a href="/gallery">사진첩</a></li>
+    </ul>
+  </header>
+
+  if menu=='diary'
+    <a href="/textForm?type=write">
+      <div id="addbtn"><p>+</p></div>
+    </a>
+    include diary
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src='diary.js'></script>
+
+  else if menu=='gallery'
+    <a href="/photoForm?type=write">
+      <div id="addbtn"><p>+</p></div>
+    </a>
+    include gallery
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src='gallery.js'></script>
+  
+</body>
+
+</html>
