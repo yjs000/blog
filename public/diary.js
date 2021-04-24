@@ -26,19 +26,8 @@ async function getContent() {
       edit.textContent = "수정";
       edit.setAttribute = ("class", "editButton");
       edit.addEventListener('click' , async() => {
-        //texteditForm.js
-        //window.location = '/form'
-        const title = prompt("수정할 제목을 입력하세요");
-        const text = prompt("수정할 글을 입력하세요");
-        if( !title || !text){
-          alert("제목과 글을 반드시 입력하셔야 합니다.");
-        }
-        try{
-          await axios.put('/content/'+key, {title, text});
-          getContent();
-        }catch(err){
-          console.log(err);
-        }
+        axios.post(`/currentkey/${key}`);
+        window.location = '/textForm?type=edit'       
       });
 
       // 삭제 버튼 생성
