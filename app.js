@@ -67,6 +67,10 @@ app.get('/gallery', (req, res) => {
   res.render('index', {menu:'gallery'});
 });
 
+app.get('/login',(req,res) =>{
+  //구현할차례~~~~~~~~~~~~~~~~~~~~~
+})
+
 app.listen(app.get('port'), () => {
   console.log(`App listening at http://localhost:${app.get('port')}`);
 });
