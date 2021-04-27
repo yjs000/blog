@@ -7,7 +7,7 @@
 
     const title = e.target.title.value;
     const text = e.target.text.value;
-    if (!title || !text) {
+    if (!title || !text) { //title이나 text에 아무것도 안적힌경우
       return alert('제목과 글을 입력하세요');
     }
     await axios.put('/user/content/' + key, { title, text })

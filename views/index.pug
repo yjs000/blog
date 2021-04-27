@@ -11,9 +11,9 @@ html
   <body>
 
     <header>
-        if isAuthenticated==true
+        if isAuthenticated==true //로그인이 되어있으면 로그아웃 출력
           a( href="/logout" id="logout") 로그아웃
-        else 
+        else  // 로그인이 되어있지 않으면 로그인 출력
           a( href="/login" id="login") 로그인
         div(id="headTitle") My blog
         <ul id="nav">
@@ -24,14 +24,13 @@ html
 
 
     if menu=='diary'
-    
-      if isAuthenticated == true
+      if isAuthenticated == true // 로그인 되어있으면 +버튼과 수정,삭제버튼이생김(admitTrue.js)
         a(href="/user/textForm?type=write")
           div(id="addbtn")
             p + 
         include diary
         <script src='admitTrue.js'></script>
-      else 
+      else // 로그인이 되어있지 않으면 +, 수정, 삭제버튼이 없음(admitFalse.js)
         include diary 
         script(src='admitFalse.js')
     else if menu =='gallery'

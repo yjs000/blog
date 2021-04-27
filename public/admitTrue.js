@@ -1,4 +1,5 @@
-
+// admit을 확인해서 true인경우 실행됨
+// admit이 true인경우 content에 수정, 삭제버튼을 달아줌
 
 //메모 입력시 메모 내용을 얻는 함수
 async function getContent() {
