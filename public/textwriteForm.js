@@ -8,10 +8,10 @@ document.getElementById('textwriteForm').addEventListener('submit', async (e) =>
   if (!title || !text) {
     return alert('제목과 글을 입력하세요');
   }
-  await axios.post('/content', { title, text })
+  await axios.post('/user/content', { title, text })
     .then(
       (res) => {
-        window.location = "/";
+        window.location = "/user";
       })
     .catch((err) => {
       console.log(err);

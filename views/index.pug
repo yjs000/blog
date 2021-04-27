@@ -1,37 +1,40 @@
 <!DOCTYPE html>
-<html>
+html
 
-<head>
-  <meta charset="utf-8">
-  <title>My Blog</title>
-  <link rel="stylesheet" href="./css/index.css">
-</head>
-
-<body>
-
-  <header>
-    a( href="/login" id="login") 로그인
-    div(id="headTitle") My blog
-    <ul id="nav">
-      <li><a href="/">일기장</a></li>
-      <li><a href="/gallery">사진첩</a></li>
-    </ul>       
-  </header>
-
-  if menu=='diary'
-    <a href="/textForm?type=write">
-      <div id="addbtn"><p>+</p></div>
-    </a>
-    include diary
+  <head>
+    <meta charset="utf-8">
+    <title>My Blog</title>
+    <link rel="stylesheet" href = "/css/index.css">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src='diary.js'></script>
+  </head>
 
-  else if menu =='gallery'
-    <a href="/pictureForm?type=write">
-      <div id="addbtn"><p>+</p></div>
-    </a>
-    include gallery
-  
-</body>
+  <body>
 
-</html>
+    <header>
+        if isAuthenticated==true
+          a( href="/logout" id="logout") 로그아웃
+        else 
+          a( href="/login" id="login") 로그인
+        div(id="headTitle") My blog
+        <ul id="nav">
+          <li><a href="/">일기장</a></li>
+          <li><a href="/gallery">사진첩</a></li>
+        </ul>       
+    </header>
+
+
+    if menu=='diary'
+    
+      if isAuthenticated == true
+        a(href="/user/textForm?type=write")
+          div(id="addbtn")
+            p + 
+        include diary
+        <script src='admitTrue.js'></script>
+      else 
+        include diary 
+        script(src='admitFalse.js')
+    else if menu =='gallery'
+      include gallery
+    
+  </body>

@@ -1,7 +1,9 @@
+
+
 //메모 입력시 메모 내용을 얻는 함수
 async function getContent() {
   try {
-    const res = await axios.get('/contents');
+    const res = await axios.get('/user/contents');
     const contents = res.data;
     console.log(contents);
     const list = document.getElementById('list');
@@ -12,22 +14,30 @@ async function getContent() {
       div = document.createElement('div');
       div.setAttribute("class", "content");
 
+      divTitle = document.createElement('div');
+      divTitle.setAttribute("class", "content-title")
+
+      divP = document.createElement('div');
+      divP.setAttribute("class", "content-p")
+
+      divButton = document.createElement('div');
+      divButton.setAttribute("class", "content-bottom");
+
       h1 = document.createElement('h1');
       h1.innerHTML = `${contents[key].title}`;
-      
+    
       p = document.createElement('p');
       p.innerHTML = `${contents[key].text}`;
 
-      buttonDiv = document.createElement('div');
-      buttonDiv.setAttribute("class", "buttonDiv");
+      
 
       // 수정 버튼 생성
       const edit =document.createElement('button');
       edit.textContent = "수정";
-      edit.setAttribute = ("class", "editButton");
+      edit.setAttribute("class", "editButton");
       edit.addEventListener('click' , async() => {
-        axios.post(`/currentkey/${key}`);
-        window.location = '/textForm?type=edit'       
+        axios.post(`/user/currentkey/${key}`);
+        window.location = '/user/textForm?type=edit'       
       });
 
       // 삭제 버튼 생성
@@ -36,7 +46,7 @@ async function getContent() {
       remove.setAttribute = ("class", "removeButton");
       remove.addEventListener('click', async () => {
         try{
-          await axios.delete('/content/'+key);
+          await axios.delete('/user/content/'+key);
           getContent();
         } catch(err) {
           console.log(err);
@@ -46,13 +56,14 @@ async function getContent() {
 
       // 연결
       list.append(div);
-      div.append(h1, p, buttonDiv);
-      buttonDiv.append(edit, remove);
+      div.append(divTitle, divP, divButton);
+      divTitle.append(h1);
+      divP.append(p);
+      divButton.append(edit, remove);
     });
   } catch (err) {
     console.error(err);
   }
 }
-
 
 window.onload = getContent(); // 화면 로딩 시 getUser 호출
