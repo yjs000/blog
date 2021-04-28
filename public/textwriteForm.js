@@ -2,7 +2,7 @@
   // 폼 제출(submit) 시 실행
 document.getElementById('textwriteForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-
+  
   const title = e.target.title.value;
   const text = e.target.text.value;
   if (!title || !text) { //title이나 text에 아무것도 안적힌경우
