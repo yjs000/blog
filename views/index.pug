@@ -1,28 +1,28 @@
-<!DOCTYPE html>
+doctype html
 html
 
-  <head>
-    <meta charset="utf-8">
-    <title>My Blog</title>
-    <link rel="stylesheet" href = "/css/index.css">
-    <link rel="icon" href="data:;base64,iVB0Rw0KGfo=">
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  </head>
+  head
+    meta(charset="utf-8")
+    title My Blog
+    link(rel="stylesheet" href = "/css/index.css")
+    link(rel="icon" href="data:;base64,iVB0Rw0KGfo=")
+    script(src="https://unpkg.com/axios/dist/axios.min.js")
 
-  <body>
-    <header>
-        //- 로그인 되어있으면 로그아웃 표시
-              로그인 안되어있으면 로그인 표시
-        if isAuthenticated==true  
-          a( href="/logout" id="logout") 로그아웃
-        else  
-          a( href="/login" id="login") 로그인
-        div(id="headTitle") My blog
-        <ul id="nav">
-          <li><a href="/">일기장</a></li>
-          <li><a href="/gallery">사진첩</a></li>
-        </ul>       
-    </header>
+  body
+    header
+      //- 로그인 되어있으면 로그아웃 표시
+            로그인 안되어있으면 로그인 표시
+      if isAuthenticated==true  
+        a( href="/logout" id="logout") 로그아웃
+      else  
+        a( href="/login" id="login") 로그인
+      div(id="headTitle") My blog
+      ul(id="nav")
+        li
+          a(href="/") 일기장
+        li
+          a(href="/gallery") 사진첩
+    
 
     //- 로그인 되어있으면 +버튼과 수정,삭제버튼이생김(admitTrue.js)
     //- 로그인이 되어있지 않으면 +, 수정, 삭제버튼이 없음(admitFalse.js)
@@ -32,7 +32,7 @@ html
           div(id="addbtn")
             p + 
         include diary
-        <script src='admitTrue.js'></script>
+        script(src='admitTrue.js')
         
       else 
         include diary 
@@ -40,5 +40,4 @@ html
         
     else if menu =='gallery'
       include gallery
-    
-  </body>
+  
