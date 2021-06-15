@@ -1,0 +1,16 @@
+include layout 
+
+form(id='join-form' action='/auth/join' method='post')
+  div(class='input-group')
+    label 이메일
+    input(id='join-email' type='email' name='email')
+  div(class='input-group')
+    label 닉네임
+    input(id='join-nick' type='text' name='nick')
+  div(class='input-group')
+    label 비밀번호
+    input(id='join-password' type='password' name='password')
+  button(id='join-button' type='submit' calss='btn') 회원가입
+  
+    
+    

@@ -1,0 +1,17 @@
+.input-group{
+  padding : 5px;
+}
+
+.label {
+  display: inline-block;
+  width : 100px;
+  color: gray;
+}
+
+#content-title, #content {
+  width: 60%;
+}
+
+#content {
+  min-height: 100px;
+}

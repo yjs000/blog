@@ -1,0 +1,82 @@
+include layout 
+
+input(id='target-id', style='display:none' value=target.id)
+input(id='target-title' style='display:none' value=target.title)
+input(id='target-content' style='display:none' value=target.content)
+input(id='target-img-url' style='display:none' value=target.img)
+
+div(class='input-group')
+  label(id='content-title-label' class='label') 제목
+  input(id='content-title' name='title' maxlength='200')
+div(class='input-group')
+  label(id='content-label' class='label') 내용
+  textarea(id='content' name='content' maxlength='200')
+div(class='img-preview')
+  img(id='img-preview' src="" style='display: none;' width='300' alt='미리보기')
+  input(id='img-url' type='hidden' name='url')
+  button(id='img-delete') 사진 삭제
+div(class='input-group')
+  label(id='img-label' class='label' for='img') 사진 업로드
+  input(id='img' type='file' accept="image/*")
+  button(id='post-btn' class='btn') 글쓰기
+
+//- img 선택되면 먼저 처리
+script.
+  // 작성되어있던 데이터 미리 넣어주기
+  const title = document.getElementById('target-title').value;
+  const content = document.getElementById('target-content').value;
+  const url = document.getElementById('target-img-url').value;
+
+  document.getElementById('content-title').value = title;
+  document.getElementById('content').value = content;
+  if(url){
+    document.getElementById('img-url').value = url;
+    document.getElementById('img-preview').src = url;
+    document.getElementById('img-preview').style.display = 'block';
+    document.getElementById('img-delete').style.display = 'block';
+  };
+
+  // img 선택할때 먼저 보내주기
+  if(document.getElementById('img')){
+    document.getElementById('img').addEventListener('change', function(e) {
+      const formData = new FormData();
+      console.log(this, this.files);
+      formData.append('img', this.files[0]);
+      axios.put('/post/img', formData)
+      .then((res) => {
+        document.getElementById('img-url').value = res.data.url;
+        document.getElementById('img-preview').src = res.data.url;
+        document.getElementById('img-preview').style.display = 'block';
+        document.getElementById('img-delete').style.display = 'block';
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    });
+  };
+
+  //사진 삭제
+  document.getElementById('img-delete').addEventListener('click', (e) => {
+    document.getElementById('img-url').value = '';
+    document.getElementById('img-preview').src = '';
+    document.getElementById('img-preview').style.display = 'none';
+    document.getElementById('img-delete').style.display = 'none';
+  });
+
+  // 나머지 보내기
+  document.getElementById('post-btn').addEventListener('click', (e) => {
+    const title = document.getElementById('content-title').value;
+    const content = document.getElementById('content').value;
+    const url = document.getElementById('img-url').value;
+    const postID = document.getElementById('target-id').value;
+    axios.put('/post', {title, content, url, postID})
+    .then((res) => {
+      window.location.href = '/';
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  });
+  
+
+

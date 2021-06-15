@@ -1,0 +1,56 @@
+include layout 
+
+if targetID 
+  div(id='targetID' style='display : none;') #{targetID}
+
+form(id='post-form' action='/post' method='post' enctype='multipart/form-data')
+  div(class='input-group')
+    label(id='content-title-label' class='label') 제목
+    input(id='content-title' name='title' maxlength='200')
+  div(class='input-group')
+    label(id='content-label' class='label') 내용
+    textarea(id='content' name='content' maxlength='200')
+  div(class='img-preview')
+    img(id='img-preview' src="" style='display: none;' width='300' alt='미리보기')
+    input(id='img-url' type='hidden' name='url')
+    button(id='img-delete' type='button' style='display:none') 사진 삭제
+  div
+    label(id='img-label' class='label' for='img') 사진 업로드
+    input(id='img' type='file' accept="image/*")
+    button(id='post-btn' type='submit' class='btn') 글쓰기
+
+//- img 선택되면 먼저 처리
+script.
+  if(document.getElementById('targetID')){
+    const targetID = document.getElementById('targetID').value;
+    console.log(targetID);
+  }
+  
+  if(document.getElementById('img')){
+    document.getElementById('img').addEventListener('change', function(e) {
+      const formData = new FormData();
+      console.log(this, this.files);
+      formData.append('img', this.files[0]);
+      axios.post('/post/img', formData)
+      .then((res) => {
+        document.getElementById('img-url').value = res.data.url;
+        document.getElementById('img-preview').src = res.data.url;
+        document.getElementById('img-preview').style.display = 'block';
+        document.getElementById('img-delete').style.display = 'block';
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    });
+  };
+
+  //사진 삭제
+  document.getElementById('img-delete').addEventListener('click', (e) => {
+    document.getElementById('img-url').value = '';
+    document.getElementById('img-preview').src = '';
+    document.getElementById('img-preview').style.display = 'none';
+    document.getElementById('img-delete').style.display = 'none';
+  });
+  
+
+

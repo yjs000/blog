@@ -1,25 +1,49 @@
 const express = require('express');
-const path = require('path');
 const morgan = require('morgan');
+const path = require('path');
 const session = require('express-session');
+// const { urlencoded } = require('express');
 const cookieParser = require('cookie-parser');
+const { sequelize } = require('./models');
 const dotenv = require('dotenv');
 dotenv.config();
+const passport = require('passport');
+const passportConfig = require('./passport/index');
+passportConfig();
 
 const app = express();
 
-app.set('port', 3000);
+app.set('port', 8000);
+//template
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine' , 'pug');
 
+//db 연결
+sequelize.sync({force : false})
+.then(() => {
+  console.log("데이터베이스 연결 성공");
+})
+.catch((err) => {
+  console.log(err);
+});
+
+//import routers
+const pageRouter = require('./routes/page');
+const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const commentRouter = require('./routes/comment');
+
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({extended: false})); //body-parser
+app.use('/img', express.static(path.join(__dirname, 'uploads'))); // /img이하 경로는 uploads에서 찾도록
+//body-parser
+app.use(express.urlencoded({extended: false})); 
 app.use(express.json()); //form data를 post로 받아올 때 필요한 모듈
-app.use(cookieParser());
+//session
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   secret: process.env.COOKIE_SECRET, //쿠키 암호화한 암호
   cookie: {
     httpOnly: true,
@@ -27,47 +51,29 @@ app.use(session({
   },
   name:'session-cookie'
 }));
+//passport
+app.use(passport.initialize()); //req객체에 passport정보 저장
+app.use(passport.session()); // req.session에 passport정보 저장, session유지될때까지 passport정보가 계속 남아있도록 하기 위함
 
-const userRouter = require('./routes/user');
-app.use('/user', userRouter);
+//router
+app.use('/', pageRouter);
+app.use('/auth', authRouter);
+app.use('/post', postRouter);
+app.use('/comment', commentRouter);
 
-app.get('/', (req, res) => {
-  // 홈화면은 일기장 탭
-  const admit = Boolean(req.cookies.admit); //로그인이 되어있는지 확인해서 bool값을 변수로 넣어줌
-  res.render('index', {menu:'diary', isAuthenticated:admit}); 
-});
-
-app.get('/gallery', (req, res) => {
-  const admit = Boolean(req.cookies.admit); //로그인이 되어있는지 확인해서 bool값을 변수로 넣어줌
-  res.render('index', {menu:'gallery', isAuthenticated:admit});
-});
-
-app.get('/logout', (req, res) => {
-  res.clearCookie('admit', true, {
-    httpOnly: true
-  });
-  res.redirect('/');
-});
-
-app.get('/login',(req,res) =>{
-  res.sendFile(path.join(__dirname,'public/login.html'));
-});
-
-app.post('/admit', (req, res) => { // 로그인 정보가 맞는지 확인
-  const {userID, password} = req.body;
-  if(userID==process.env.USERID & password==process.env.PASSWORD){
-    res.cookie('admit',true, {
-      maxAge : 1000* 60 * 60,
-      httpOnly: true
-    });
-    res.redirect('/user'); //로그인 확인되면 모든 url에 /user가 붙음 // index.html로 감
-  } else{
-    res.redirect('/login');
-  }
-});
-
+//요청 경로가 없을 경우 오류처리
 app.use((req, res, next) => {
-  res.status(404).send('Not Found');
+  const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  error.status = 404;
+  next(error);
+});
+
+//서버 오류 처리
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = process.env.NODE_ENV !== 'production' ? err:{};
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 app.listen(app.get('port'), () => {

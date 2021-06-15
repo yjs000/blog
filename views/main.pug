@@ -1,0 +1,116 @@
+doctype html 
+html 
+  head
+    meta(charset="UTF-8") 
+    title My Blog 
+    //- icon 
+    link(rel="stylesheet", href="css/main.css")
+    //- favicon issue
+    link(rel="icon" href="data:;base64,iVB0Rw0KGfo=")
+    script(src="https://unpkg.com/axios/dist/axios.min.js")
+  body
+    header 
+      if user
+        a(href="/auth/logout" id='logout') 로그아웃
+      else 
+        a(href="/login" id="login") 로그인 
+      a(href='/join' id='join') 회원가입
+      //- title
+      div(id="headTitle") My blog
+
+    if user && isAdmit
+      a(href='/postWrite')
+        div(id='addbtn')
+          p +
+
+    each post in posts 
+      div(class='post-container' data-postID=post.id)
+        div(class='post-head')
+          h1(class='post-title') #{post.title}
+          
+          div(class='post-desc')  
+            div(class="post-author") 작성자 : #{post.User.nick}
+            div(class='post-createdAt') 작성일 : #{post.createdAt}
+          
+          if user && post.User.id == user.id 
+            div(class='post-buttons')
+              button(class='btnEdit' value=post.id) 수정
+              button(class='btnRemove' value=post.id) 삭제
+        
+        div(class="post-content") 
+          p #{post.content}
+          if post.img
+            img(class='post-img' src=post.img alt="섬네일")
+        
+        button(class='btnComment' value=post.id) 댓글▽
+        div(class="comment-container" style='display:none' data-postid=post.id)
+          //- 로그인되어있으면 댓글 입력창이 뜸
+          if user
+            form(class="comment-form" action='/comment' method='post')
+              input(class="commet-form-postId" name='postId' value=post.id style='display:none')
+              input(class='comment-form-commenter' name='commenter' value=user.id style="display:none")
+              label #{user.nick}
+              input(class="comment-form-comment" name='comment')
+              button(class="comment-form-btn-register" type='submit') 등록
+          //- 로그인되어있지 않고 comment가 없으면 글이 뜸
+          else if !post.Comment
+            div(class='noComments') 로그인하여 댓글을 입력해주세요!
+
+          each comment in comments
+            if comment.PostId == post.id   
+              div(class='comment')
+                div(class='comment-desc')
+                  div(class='commenter') #{comment.User.nick}
+                  div(class='comment-time') #{comment.createdAt}
+                div(class='comment-text') #{comment.comment}
+          
+            
+
+
+        
+  script.
+    const editButtons = document.getElementsByClassName('btnEdit');
+      for (let i=0; i<editButtons.length; i++) {
+        editButtons[i].addEventListener('click', (e) => {
+          const postID = editButtons[i].value;
+          //- console.log(postID);
+          window.location.href=`/postEdit/${postID}`;
+        });
+      }
+
+    const removeButtons = document.getElementsByClassName('btnRemove');
+      for (let i=0; i<removeButtons.length; i++) {
+        removeButtons[i].addEventListener('click', (e) => {
+          const postID = removeButtons[i].value;
+          //- console.log(postID);
+          axios.delete(`/post/${postID}`)
+          .then((res) => {
+            window.location.href='/';
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+        });
+      }
+
+    // comment-container의 post.id와 댓글버튼의 post.id가 같으면 comment-container를 열고 닫음
+    const comment_containers = document.getElementsByClassName('comment-container');
+    const commentButtons = document.getElementsByClassName('btnComment');
+      for (let i=0; i<commentButtons.length; i++) {
+        let isClick=false;// 클릭되어있는지 확인하는 변수
+        commentButtons[i].addEventListener('click', (e) => {
+          if(isClick==false){
+            isClick=true; //댓글을 클릭하면 댓글이 보임
+            if(commentButtons[i].value == comment_containers[i].dataset.postid){
+              comment_containers[i].style.display='block';
+            }
+          }else{
+            isClick=false; //댓글이 보일때 다시 댓글을 클릭하면 댓글이 안보임
+            if(commentButtons[i].value == comment_containers[i].dataset.postid){
+              comment_containers[i].style.display='none';
+            }
+          }
+        });
+      }
+
+    
